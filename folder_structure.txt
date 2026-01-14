@@ -1,0 +1,21 @@
+python-data-utils/
+│
+├── app.py                  # Flask entry point
+├── requirements.txt        # Dependencies
+├── README.md               # Project documentation
+│
+├── utils/                  # Core logic (reusable)
+│   ├── __init__.py
+│   ├── url_parser.py
+│   ├── data_aggregator.py
+│   ├── ticket_allocator.py
+│
+├── data_tools/
+│   ├── pandas_cleaner.py
+│   ├── numpy_analyzer.py
+│
+├── templates/              # HTML (optional UI)
+│   └── index.html
+│
+└── static/
+    └── style.css

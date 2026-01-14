@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>URL Analyzer</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🔍 URL Analyzer</h1>
+        <button class="toggle" onclick="toggleDarkMode()">🌙</button>
+    </div>
+
+    <input type="text" id="urlInput" placeholder="Enter full URL (https://...)">
+    <button onclick="analyzeURL()">Analyze</button>
+
+    <button id="copyBtn" onclick="copyResults()" style="display:none;">
+        📋 Copy Results
+    </button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+let latestResult = "";
+
+async function analyzeURL() {
+    const url = document.getElementById("urlInput").value.trim();
+    const resultDiv = document.getElementById("result");
+    const copyBtn = document.getElementById("copyBtn");
+
+    resultDiv.innerHTML = "⏳ Analyzing...";
+    copyBtn.style.display = "none";
+
+    const response = await fetch("/analyze-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url })
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+        resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+        return;
+    }
+
+    let html = "";
+    latestResult = "";
+
+    for (const key in data) {
+        const value = JSON.stringify(data[key].value, null, 2);
+        latestResult += `${key}: ${value}\n`;
+
+        html += `
+            <div class="card">
+                <h3>${key}</h3>
+                <pre>${value}</pre>
+                <p class="desc">${data[key].description}</p>
+            </div>
+        `;
+    }
+
+    resultDiv.innerHTML = html;
+    copyBtn.style.display = "block";
+}
+
+function copyResults() {
+    navigator.clipboard.writeText(latestResult);
+    alert("Results copied to clipboard!");
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+}
+</script>
+
+</body>
+</html>
